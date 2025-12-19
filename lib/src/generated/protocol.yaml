@@ -1,0 +1,45 @@
+adminEndpoints:
+  - listUsersByRole:
+  - toggleUserActive:
+  - createUser:
+  - createUserWithPassword:
+  - listMedicines:
+  - addMedicine:
+  - getRosters:
+  - saveRoster:
+  - addAuditLog:
+  - listStaff:
+  - getAdminProfile:
+  - updateAdminProfile:
+  - changePassword:
+auth:
+  - login:
+  - register:
+  - resendOtp:
+  - sendWelcomeEmailViaResend:
+  - verifyOtp:
+  - requestPasswordReset:
+  - verifyPasswordReset:
+  - resetPassword:
+lab:
+  - getAllLabTests:
+  - updateLabTest:
+  - createLabTest:
+  - createTestResult:
+  - attachResultFile:
+  - attachResultFileBytes:
+  - sendDummySms:
+  - submitResult:
+  - submitResultWithSms:
+  - getAllTestResults:
+  - getAttachmentBytes:
+  - startFileUpload:
+  - uploadFileChunk:
+  - finishFileUpload:
+patient:
+  - getPatientProfile:
+  - listTests:
+  - getUserRole:
+  - updatePatientProfile:
+greeting:
+  - hello:
