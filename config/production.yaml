@@ -31,13 +31,10 @@ webServer:
 # connect on the public IP of the database e.g. database.examplepod.com.
 # production.yaml
 database:
-  # Replace the placeholder with the actual internal hostname 
-  # Found in your Postgres service -> Variables -> RAILWAY_PRIVATE_DOMAIN
-  host: postgres
-  port: 5432
+  host: yamanote.proxy.rlwy.net
+  port: 27397
   name: railway
   user: postgres
-  requireSsl: false # Internal Railway connections usually don't require SSL
 
 # This is the setup for Redis. The default for the Google Cloud Engine Terraform
 # configuration is to connect on a private IP address.
