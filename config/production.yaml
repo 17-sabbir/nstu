@@ -35,6 +35,7 @@ database:
   port: 27397
   name: railway
   user: postgres
+  applyMigrations: true
 
 # This is the setup for Redis. The default for the Google Cloud Engine Terraform
 # configuration is to connect on a private IP address.
