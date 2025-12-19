@@ -30,9 +30,9 @@ webServer:
 
 # This is the database setup for your server.
 database:
-  host: host.docker.internal
+  host: postgres.railway.internal
   port: 5432
-  name: dishari_db
+  name: railway
   user: postgres
   password: 'sabbir'
 
