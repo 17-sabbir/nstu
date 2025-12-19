@@ -34,7 +34,6 @@ database:
   port: 5432
   name: railway
   user: postgres
-  password: 'sabbir'
 
   #requireSsl: true # defaults to false
   #isUnixSocket: true # defaults to false
