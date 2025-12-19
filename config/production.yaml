@@ -33,7 +33,7 @@ webServer:
 database:
   # Replace the placeholder with the actual internal hostname 
   # Found in your Postgres service -> Variables -> RAILWAY_PRIVATE_DOMAIN
-  host: postgres.railway.internal 
+  host: postgres
   port: 5432
   name: railway
   user: postgres
