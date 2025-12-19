@@ -29,8 +29,9 @@ webServer:
   bindAddress: 0.0.0.0
 
 # This is the database setup for your server.
+# This is the database setup for your server.
 database:
-  host: postgres.railway.internal
+  host: localhost  # এটি পরিবর্তন করুন
   port: 5432
   name: railway
   user: postgres
