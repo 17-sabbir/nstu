@@ -191,7 +191,6 @@ class AuthEndpoint extends Endpoint {
     <title>$subject</title>
   </head>
   <body style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
-    <h2 style="color:#1a1a1a;">$subject</h2>
     <p>Hello,</p>
     <p>Your one-time code is:</p>
     <h1 style="margin:0; font-size:28px; letter-spacing:1.5px;">$otp</h1>
