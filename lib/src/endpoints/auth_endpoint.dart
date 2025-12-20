@@ -174,17 +174,17 @@ class AuthEndpoint extends Endpoint {
     final String subject;
 
     if (isReset) {
-      subject = 'Dishari Password Reset Code';
+      subject = 'NSTU Medical Center Password Reset Code';
       mailBody =
-          'Your Dishari password reset code is: $otp. If you did not request this, please contact support.';
+          'Your NSTU App password reset code is: $otp. If you did not request this, please contact support.';
     } else {
-      subject = 'Dishari Registration Verification Code';
+      subject = 'NSTU Medical Center Registration Verification Code';
       mailBody =
-          'Your Dishari registration verification code is: $otp. Welcome to Dishari Medical Center!';
+          'Your NSTU Medical Center registration verification code is: $otp. Welcome to NSTU Medical Center!';
     }
 
     // Correctly formatted from email
-    const String verifiedFromEmail = "Dishari NSTU <onboarding@sabbir.qzz.io>";
+    const String verifiedFromEmail = "NSTU Medical Center <onboarding@sabbir.qzz.io>";
 
     final Map<String, dynamic> emailData = {
       "from": verifiedFromEmail,
@@ -221,12 +221,12 @@ class AuthEndpoint extends Endpoint {
   /// Public helper: send a welcome email using Resend API. Returns true on success.
   Future<bool> sendWelcomeEmailViaResend(
       Session session, String email, String name) async {
-    final String subject = 'Welcome to Dishari';
+    final String subject = 'Welcome to NSTU Medical Center';
     final String mailBody =
         'Hi $name,\n\nYour account has been created. You can log in using your email.';
 
     // Correctly formatted from email
-    const String verifiedFromEmail = "Dishari NSTU <onboarding@sabbir.qzz.io>";
+    const String verifiedFromEmail = "NSTU Medical Center <onboarding@sabbir.qzz.io>";
 
     final Map<String, dynamic> emailData = {
       "from": verifiedFromEmail,
