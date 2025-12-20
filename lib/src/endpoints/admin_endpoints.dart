@@ -203,14 +203,19 @@ class AdminEndpoints extends Endpoint {
           final r = role.toUpperCase();
           if (allowed.contains(r)) {
             // Fire-and-forget so user creation is not blocked by email sending.
+            final serverpod = session.serverpod;
             Future.microtask(() async {
+              var backgroundSession = await serverpod.createSession();
               try {
                 final auth = AuthEndpoint();
-                await auth.sendWelcomeEmailViaResend(session, email, name);
+                await auth.sendWelcomeEmailViaResend(backgroundSession, email, name);
               } catch (e, st) {
                 session.log('Failed to send welcome email (async): $e\n$st',
                     level: LogLevel.warning);
-              }
+              } finally {
+        // কাজ শেষ হলে ব্যাকগ্রাউন্ড সেশনটি অবশ্যই ক্লোজ করতে হবে
+        await backgroundSession.close();
+      }
             });
           }
         } catch (e) {
