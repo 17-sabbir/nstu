@@ -78,15 +78,44 @@ class AdminEndpoints extends Endpoint {
     }
   }
 
+  /// Normalize and validate a phone number. Accepts various input forms and
+  /// returns normalized form like '+88XXXXXXXXXXX' where X... is 11 digits.
+  /// Returns null if invalid.
+  String? _normalizePhone(String? phone) {
+    if (phone == null) return null;
+    var s = phone.trim();
+    if (s.isEmpty) return null;
+    // remove spaces, dashes, parentheses and plus signs for digit extraction
+    final digits = s.replaceAll(RegExp(r"[^0-9]"), '');
+    // Accept if digits are 11 (local form like 01XXXXXXXXX)
+    if (digits.length == 11) {
+      // final normalized with +88 prefix
+      return '+88' + digits;
+    }
+    // Accept if digits length 13 and starts with country code 88
+    if (digits.length == 13 && digits.startsWith('88')) {
+      final rest = digits.substring(2);
+      if (rest.length == 11) return '+88' + rest;
+    }
+    // Not valid
+    return null;
+  }
+
   /// Create a new user record. Expects passwordHash to already be hashed by the caller.
   /// Returns 'OK' on success or an error message string.
   Future<String> createUser(Session session, String userId, String name,
       String email, String passwordHash, String role, String? phone) async {
     try {
+      // Normalize and validate phone
+      final normalizedPhone = _normalizePhone(phone);
+      if (normalizedPhone == null) {
+        return 'Invalid phone number. Expected +88 followed by 11 digits.';
+      }
+
       // Pre-check for existing email or phone to return clear messages
       final existing = await session.db.unsafeQuery(
         'SELECT email, phone FROM users WHERE email = @e OR phone = @ph LIMIT 1',
-        parameters: QueryParameters.named({'e': email, 'ph': phone}),
+        parameters: QueryParameters.named({'e': email, 'ph': normalizedPhone}),
       );
 
       if (existing.isNotEmpty) {
@@ -97,9 +126,8 @@ class AdminEndpoints extends Endpoint {
             existingEmail.toString().toLowerCase() == email.toLowerCase()) {
           return 'Email already registered';
         }
-        if (phone != null &&
-            existingPhone != null &&
-            existingPhone.toString() == phone) {
+        if (existingPhone != null &&
+            existingPhone.toString() == normalizedPhone) {
           return 'Phone number already registered';
         }
         // Fallback generic duplicate message
@@ -119,7 +147,7 @@ class AdminEndpoints extends Endpoint {
           'name': name,
           'email': email,
           'pass': passwordHash,
-          'phone': phone,
+          'phone': normalizedPhone,
           'role': role,
         }),
       );
@@ -159,9 +187,15 @@ class AdminEndpoints extends Endpoint {
       String role,
       String? phone) async {
     try {
+      // Ensure phone provided and normalized
+      final normalizedPhone = _normalizePhone(phone);
+      if (normalizedPhone == null) {
+        return 'Invalid phone number. Expected +88 followed by 11 digits.';
+      }
+
       final hashed = sha256.convert(utf8.encode(password)).toString();
       final res =
-          await createUser(session, userId, name, email, hashed, role, phone);
+          await createUser(session, userId, name, email, hashed, role, normalizedPhone);
       if (res == 'OK') {
         // Send welcome email for these roles when created via admin UI.
         try {
