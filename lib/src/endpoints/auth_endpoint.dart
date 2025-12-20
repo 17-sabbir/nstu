@@ -170,27 +170,49 @@ class AuthEndpoint extends Endpoint {
   /// the email content/subject will be for password reset; otherwise it's for registration.
   Future<bool> _sendOtpWithResend(Session session, String email, String otp,
       {bool isReset = false}) async {
-    final String mailBody;
-    final String subject;
+    // Subject and email body content
+    final String subject = isReset
+        ? 'NSTU Medical Center Password Reset Code'
+        : 'NSTU Medical Center Verification Code';
 
-    if (isReset) {
-      subject = 'NSTU Medical Center Password Reset Code';
-      mailBody =
-          'Your NSTU App password reset code is: $otp. If you did not request this, please contact support.';
-    } else {
-      subject = 'NSTU Medical Center Registration Verification Code';
-      mailBody =
-          'Your NSTU Medical Center registration verification code is: $otp. Welcome to NSTU Medical Center!';
-    }
+    final String plainTextBody = isReset
+        ? 'Your NSTU Medical Center password reset code is: $otp\n'
+            'This code will expire in 2 minutes.\n\n'
+            'If you did not request this, you can ignore this email.'
+        : 'Your NSTU Medical Center registration code is: $otp\n'
+            'This code will expire in 2 minutes.\n\n'
+            'If you did not request this, you can ignore this email.';
 
-    // Correctly formatted from email
-    const String verifiedFromEmail = "NSTU Medical Center <onboarding@sabbir.qzz.io>";
+    final String htmlBody = """
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>$subject</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
+    <h2 style="color:#1a1a1a;">$subject</h2>
+    <p>Hello,</p>
+    <p>Your one-time code is:</p>
+    <h1 style="margin:0; font-size:28px; letter-spacing:1.5px;">$otp</h1>
+    <p>This code will expire in <strong>2 minutes</strong>.</p>
+    <p>If you did not request ${isReset ? 'a password reset' : 'this verification'}, you can safely ignore this email.</p>
+    <br>
+    <p>Thank you,<br>NSTU Medical Center</p>
+  </body>
+</html>
+""";
+
+    // Resend API payload
+    const String fromEmail = "NSTU Medical Center <onboarding@sabbir.qzz.io>";
 
     final Map<String, dynamic> emailData = {
-      "from": verifiedFromEmail,
+      "from": fromEmail,
       "to": [email],
       "subject": subject,
-      "text": mailBody,
+      // Include both plain text and HTML
+      "text": plainTextBody,
+      "html": htmlBody,
     };
 
     try {
@@ -204,7 +226,8 @@ class AuthEndpoint extends Endpoint {
       );
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        session.log('OTP $otp sent successfully to $email via Resend');
+        session.log('Email ($subject) sent successfully to $email via Resend',
+            level: LogLevel.info);
         return true;
       } else {
         session.log(
@@ -226,7 +249,7 @@ class AuthEndpoint extends Endpoint {
         'Hi $name,\n\nYour account has been created. You can log in using your email.';
 
     // Correctly formatted from email
-    const String verifiedFromEmail = "NSTU Medical Center <onboarding@sabbir.qzz.io>";
+    const String verifiedFromEmail = "Welcome to NSTU Medical Center <onboarding@sabbir.qzz.io>";
 
     final Map<String, dynamic> emailData = {
       "from": verifiedFromEmail,
